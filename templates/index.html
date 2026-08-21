@@ -1,11 +1,269 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-    </head>
-    <body>
-        <h1>Hola ¿cómo estás?, {{ person }}!</h1>
-    </body>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Hola, Fabio 👋</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --medianoche:#130B2A;
+    --medianoche-2:#1E1240;
+    --fucsia:#FF3EA5;
+    --cian:#35E8E0;
+    --mango:#FFC63C;
+    --lavanda:#B79CFF;
+    --crema:#FFF6EC;
+    --terminal:#6BFFB0;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    min-height:100vh;
+    background:radial-gradient(ellipse at 50% 15%, var(--medianoche-2), var(--medianoche) 70%);
+    font-family:'Plus Jakarta Sans', sans-serif;
+    color:var(--crema);
+    overflow:hidden;
+    position:relative;
+    cursor:default;
+  }
+
+  /* ---------- fondo aurora ---------- */
+  .aurora{ position:fixed; inset:0; z-index:0; overflow:hidden; filter:blur(70px); }
+  .aurora__blob{ position:absolute; border-radius:50%; opacity:.6; mix-blend-mode:screen; }
+  .aurora__blob--a{ width:58vmax; height:58vmax; top:-16vmax; left:-12vmax;
+    background:conic-gradient(from 90deg, var(--fucsia), var(--mango), var(--cian), var(--fucsia));
+    animation:morph 16s ease-in-out infinite, floatA 24s ease-in-out infinite; }
+  .aurora__blob--b{ width:46vmax; height:46vmax; bottom:-16vmax; right:-10vmax;
+    background:conic-gradient(from 200deg, var(--cian), var(--lavanda), var(--fucsia), var(--cian));
+    animation:morph 18s ease-in-out infinite reverse, floatA 28s ease-in-out infinite; }
+  .aurora__blob--c{ width:34vmax; height:34vmax; top:32%; left:34%; opacity:.4;
+    background:conic-gradient(from 40deg, var(--mango), var(--fucsia), var(--cian), var(--mango));
+    animation:morph 12s ease-in-out infinite, floatA 20s ease-in-out infinite reverse; }
+
+  @keyframes morph{
+    0%,100%{ border-radius:42% 58% 65% 35% / 45% 45% 55% 55%; }
+    33%{ border-radius:65% 35% 45% 55% / 55% 60% 40% 45%; }
+    66%{ border-radius:40% 60% 55% 45% / 35% 55% 45% 65%; }
+  }
+  @keyframes floatA{
+    0%,100%{ transform:translate(0,0) rotate(0deg); }
+    50%{ transform:translate(3vw,-3vh) rotate(12deg); }
+  }
+  @keyframes rotateSlow{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+
+  /* ---------- textura grano ---------- */
+  .grain{
+    position:fixed; inset:0; z-index:6; opacity:.045; pointer-events:none; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- formas flotantes ---------- */
+  .drift-field{ position:fixed; inset:0; z-index:1; pointer-events:none; }
+  .shape{ position:absolute; font-size:clamp(14px,2vw,26px); animation:drift linear infinite; user-select:none; }
+  @keyframes drift{
+    0%{ transform:translate(0,0) rotate(0deg); }
+    50%{ transform:translate(var(--dx,20px), var(--dy,-30px)) rotate(180deg); }
+    100%{ transform:translate(0,0) rotate(360deg); }
+  }
+
+  /* ---------- escenario principal ---------- */
+  .stage{
+    position:relative; z-index:2; min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; gap:10px; padding:24px;
+    opacity:0; transform:scale(.96); transition:opacity 1s ease, transform 1s ease;
+  }
+  .stage.is-visible{ opacity:1; transform:scale(1); }
+
+  .orb-wrap{ position:absolute; top:50%; left:50%; width:min(70vw,520px); height:min(70vw,520px);
+    z-index:-1; transform:translate(-50%,-50%); transition:transform .35s ease-out; }
+  .orb{ width:100%; height:100%; filter:blur(90px); opacity:.55;
+    background:conic-gradient(from 0deg, var(--fucsia), var(--mango), var(--cian), var(--lavanda), var(--fucsia));
+    animation:morph 10s ease-in-out infinite, rotateSlow 30s linear infinite; }
+
+  .eyebrow{ font-family:'Space Mono', monospace; font-size:13px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--terminal); opacity:.85; margin:0; }
+
+  .greeting{ font-family:'Unbounded', sans-serif; font-weight:800; margin:6px 0 0; max-width:92vw;
+    font-size:clamp(2.2rem,7vw,5rem); line-height:1.06;
+    background:linear-gradient(120deg, var(--fucsia), var(--mango) 45%, var(--cian) 80%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    background-size:220% 220%; animation:shift 8s ease-in-out infinite; }
+  @keyframes shift{ 0%,100%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } }
+
+  .wave{ display:inline-block; animation:waveMove 2.4s ease-in-out infinite; transform-origin:70% 70%; }
+  @keyframes waveMove{
+    0%,60%,100%{ transform:rotate(0deg); }
+    10%{ transform:rotate(16deg); } 20%{ transform:rotate(-10deg); }
+    30%{ transform:rotate(16deg); } 40%{ transform:rotate(-6deg); } 50%{ transform:rotate(10deg); }
+  }
+
+  .subtitle{ font-size:clamp(1rem,2vw,1.2rem); color:var(--crema); opacity:.85; margin:8px 0 0; max-width:40ch; }
+  .datestr{ font-family:'Space Mono', monospace; font-size:.8rem; color:var(--lavanda); opacity:.75;
+    text-transform:capitalize; margin:14px 0 0; }
+
+  .clockpill{ margin-top:8px; display:inline-flex; align-items:center; gap:9px;
+    font-family:'Space Mono', monospace; font-size:.95rem; letter-spacing:.04em;
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14);
+    padding:9px 18px; border-radius:999px; backdrop-filter:blur(6px); }
+  .clockpill__dot{ width:8px; height:8px; border-radius:50%; background:var(--terminal);
+    box-shadow:0 0 8px var(--terminal); animation:pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.4; transform:scale(.7); } }
+
+  .hint{ margin-top:28px; font-size:.8rem; color:var(--lavanda); opacity:.7; }
+
+  /* ---------- pantalla de arranque ---------- */
+  .boot{ position:fixed; inset:0; z-index:10; background:var(--medianoche);
+    display:flex; align-items:center; justify-content:center; padding:24px;
+    transition:opacity .8s ease, transform .8s ease, filter .8s ease; }
+  .boot.is-done{ opacity:0; transform:scale(1.4); filter:blur(14px); pointer-events:none; }
+  .boot__panel{ font-family:'Space Mono', monospace; color:var(--terminal);
+    font-size:clamp(.85rem,2.2vw,1.05rem); text-align:left; min-width:240px; max-width:90vw; }
+  .boot__line{ margin:0 0 8px; min-height:1.2em; white-space:pre-wrap; word-break:break-word; }
+  .boot__cursor{ display:inline-block; animation:blink 1s step-end infinite; }
+  @keyframes blink{ 0%,50%{ opacity:1; } 51%,100%{ opacity:0; } }
+
+  /* ---------- confeti de clic ---------- */
+  .particle{ position:fixed; width:7px; height:7px; border-radius:50%; z-index:20;
+    pointer-events:none; transform:translate(-50%,-50%); animation:particleBurst .65s ease-out forwards; }
+  @keyframes particleBurst{
+    to{ transform:translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))); opacity:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora__blob aurora__blob--a"></span>
+    <span class="aurora__blob aurora__blob--b"></span>
+    <span class="aurora__blob aurora__blob--c"></span>
+  </div>
+
+  <div class="drift-field" aria-hidden="true">
+    <span class="shape" style="top:14%; left:10%; color:var(--cian); --dx:30px; --dy:-35px; animation-duration:11s;">✦</span>
+    <span class="shape" style="top:22%; left:82%; color:var(--mango); --dx:-25px; --dy:30px; animation-duration:9s; animation-delay:.6s;">◆</span>
+    <span class="shape" style="top:70%; left:12%; color:var(--fucsia); --dx:20px; --dy:25px; animation-duration:13s; animation-delay:1.2s;">✚</span>
+    <span class="shape" style="top:80%; left:78%; color:var(--lavanda); --dx:-30px; --dy:-20px; animation-duration:10s; animation-delay:.3s;">●</span>
+    <span class="shape" style="top:8%; left:52%; color:var(--cian); --dx:15px; --dy:20px; animation-duration:14s; animation-delay:1.6s;">◯</span>
+    <span class="shape" style="top:60%; left:90%; color:var(--mango); --dx:-18px; --dy:-28px; animation-duration:12s; animation-delay:.9s;">▲</span>
+    <span class="shape" style="top:88%; left:40%; color:var(--fucsia); --dx:22px; --dy:-18px; animation-duration:8s; animation-delay:1.9s;">✺</span>
+  </div>
+
+  <main class="stage" id="stage">
+    <div class="orb-wrap" id="orbWrap" aria-hidden="true"><div class="orb"></div></div>
+    <p class="eyebrow">// bienvenido de nuevo</p>
+    <h1 class="greeting">¡Hola, Fabio! <span class="wave" aria-hidden="true">👋</span></h1>
+    <p class="subtitle" id="subtitle"></p>
+    <p class="datestr" id="dateStr"></p>
+    <div class="clockpill"><span class="clockpill__dot"></span><span id="clock">00:00:00</span></div>
+    <p class="hint">mueve el cursor · haz clic en cualquier parte</p>
+  </main>
+
+  <div class="boot" id="boot" role="status" aria-live="polite">
+    <div class="boot__panel">
+      <p class="boot__line" id="bootLine1"></p>
+      <p class="boot__line" id="bootLine2"></p>
+      <p class="boot__line" id="bootLine3"></p>
+      <span class="boot__cursor">▌</span>
+    </div>
+  </div>
+
+  <div class="grain" aria-hidden="true"></div>
+
+<script>
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- secuencia de arranque ----
+  const bootLines = ["> iniciando sistema...", "> verificando usuario...", "> acceso concedido: Fabio ✓"];
+
+  function typeLine(el, text, speed){
+    return new Promise(resolve => {
+      let i = 0;
+      const timer = setInterval(() => {
+        el.textContent += text[i];
+        i++;
+        if(i >= text.length){ clearInterval(timer); resolve(); }
+      }, speed);
+    });
+  }
+
+  async function runBoot(){
+    const lineEls = [document.getElementById('bootLine1'), document.getElementById('bootLine2'), document.getElementById('bootLine3')];
+    if(reducedMotion){
+      lineEls.forEach((el,i) => el.textContent = bootLines[i]);
+    } else {
+      for(let i = 0; i < bootLines.length; i++){
+        await typeLine(lineEls[i], bootLines[i], 22);
+        await new Promise(r => setTimeout(r, 180));
+      }
+      await new Promise(r => setTimeout(r, 450));
+    }
+    document.getElementById('boot').classList.add('is-done');
+    document.getElementById('stage').classList.add('is-visible');
+  }
+  runBoot();
+
+  // ---- saludo dinámico según la hora ----
+  function setGreeting(){
+    const h = new Date().getHours();
+    let msg;
+    if(h >= 5 && h < 12) msg = "Buenos días ☀️ — dale con toda la energía hoy.";
+    else if(h >= 12 && h < 19) msg = "Buenas tardes 🔥 — vas bien, seguí así.";
+    else msg = "Buenas noches 🌙 — hora de bajarle el ritmo (o de seguir dándole).";
+    document.getElementById('subtitle').textContent = msg;
+  }
+  setGreeting();
+
+  // ---- fecha ----
+  const dateStr = new Date().toLocaleDateString('es-CO', { weekday:'long', day:'numeric', month:'long' });
+  document.getElementById('dateStr').textContent = dateStr;
+
+  // ---- reloj en vivo ----
+  function pad(n){ return n.toString().padStart(2,'0'); }
+  function updateClock(){
+    const d = new Date();
+    document.getElementById('clock').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ---- parallax del orbe con el cursor ----
+  if(!reducedMotion){
+    const orbWrap = document.getElementById('orbWrap');
+    window.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth) - .5;
+      const y = (e.clientY / window.innerHeight) - .5;
+      orbWrap.style.transform = `translate(-50%,-50%) translate(${x*40}px, ${y*40}px)`;
+    });
+  }
+
+  // ---- confeti al hacer clic ----
+  function burst(x, y){
+    const colors = ['var(--fucsia)','var(--cian)','var(--mango)','var(--lavanda)'];
+    for(let i = 0; i < 10; i++){
+      const p = document.createElement('span');
+      p.className = 'particle';
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 40 + Math.random() * 70;
+      p.style.setProperty('--tx', `${Math.cos(angle)*dist}px`);
+      p.style.setProperty('--ty', `${Math.sin(angle)*dist}px`);
+      p.style.left = `${x}px`;
+      p.style.top = `${y}px`;
+      p.style.background = colors[i % colors.length];
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 700);
+    }
+  }
+  document.addEventListener('click', (e) => { if(!reducedMotion) burst(e.clientX, e.clientY); });
+</script>
+</body>
 </html>
